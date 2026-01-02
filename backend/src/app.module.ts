@@ -1,22 +1,28 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-// Etities
-import { Artist } from './entities/artist.entity';
-import { Album } from './entities/album.entity';
-import { Track } from './entities/track.entity';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { MusicController } from './music.controller'; //
+import { ScannerService } from './scanner.service'; //
+import { Artist } from './entities/artist.entity'; //
+import { Album } from './entities/album.entity'; //
+import { Track } from './entities/track.entity'; //
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST || 'db', // 'db' là tên service trong docker-compose
+      host: 'db',
       port: 5432,
       username: 'user',
       password: 'pass',
       database: 'mydb',
-      entities: [Artist, Album, Track], // Khai báo các file bạn vừa tạo
-      synchronize: true, // Tự động tạo bảng dựa trên code (Chỉ dùng khi học tập/dev)
+      entities: [Artist, Album, Track],
+      synchronize: true,
     }),
+    TypeOrmModule.forFeature([Artist, Album, Track]), // QUAN TRỌNG: Thêm dòng này
   ],
+  controllers: [AppController, MusicController], // Đăng ký MusicController
+  providers: [AppService, ScannerService], // Đăng ký ScannerService
 })
 export class AppModule {}

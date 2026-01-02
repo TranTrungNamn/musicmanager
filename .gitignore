@@ -1,9 +1,19 @@
-# Dependency directories
+# Dependencies
 node_modules/
 dist/
-
-# Environments
-.env
+npm-debug.log*
 
 # Docker
-.docker
+.docker/
+
+# Dữ liệu nhạc (Cực kỳ quan trọng để không đẩy nhạc lên GitHub)
+backend/library/
+/library/
+
+# Môi trường và Database
+.env
+pgdata/
+
+# OS files
+.DS_Store
+Thumbs.db

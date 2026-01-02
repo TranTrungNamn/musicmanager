@@ -6,8 +6,11 @@ export class Artist {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  name: string; // Ví dụ: Arctic Monkeys
+  @Column({ unique: true })
+  name: string;
+  // PHẢI có type: 'varchar' để Postgres không hiểu lầm là Object
+  @Column({ type: 'varchar', nullable: true }) // THÊM type: 'varchar' VÀO ĐÂY
+  picturePath: string | null;
 
   @OneToMany(() => Album, (album) => album.artist)
   albums: Album[];
