@@ -1,19 +1,18 @@
-# Dependencies
+# Thư mục thư viện Node.js
 node_modules/
 dist/
-npm-debug.log*
 
-# Docker
-.docker/
-
-# Dữ liệu nhạc (Cực kỳ quan trọng để không đẩy nhạc lên GitHub)
-backend/library/
-/library/
-
-# Môi trường và Database
-.env
+# Dữ liệu của Database (đừng đẩy đống này lên)
 pgdata/
 
-# OS files
+# THƯ MỤC NHẠC (Quan trọng nhất)
+# Vì bạn mount folder từ Windows vào Docker, 
+# hãy đảm bảo tên folder nhạc trong project bị loại bỏ
+backend/library/
+
+# File môi trường
+.env
+
+# Các file rác của hệ điều hành
 .DS_Store
 Thumbs.db

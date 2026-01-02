@@ -11,16 +11,19 @@ services:
       - "3000:3000"
       - "9229:9229"
     volumes:
-      - ./backend:/usr/src/app # Map thư mục backend vào container
-      - ./backend/node_modules:/usr/src/app/node_modules # Giữ nguyên node_modules trong container
-      # Cấu trúc: [Đường dẫn máy Windows] : [Đường dẫn trong Docker] : [Chế độ chỉ đọc]
-      - C:/Users/ACER/qobuzdl/artist_qobuz_new_00:/usr/src/app/library:ro
+      # Kết nối code để sửa bên ngoài bên trong đổi ngay
+      - ./backend:/usr/src/app
+      # Giữ node_modules riêng biệt trong Docker
+      - /usr/src/app/node_modules
+      # Ánh xạ thư mục nhạc - Vế trái là thư mục library trên máy ACER của bạn
+      # Thay đổi dòng dưới đây thành đường dẫn tuyệt đối:
+      - C:/Users/ACER/qobuzdl/artist_qobuz_new_00:/usr/src/app/library
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://user:pass@db:5432/mydb?schema=public
-      # Thêm biến này nếu bạn dùng Windows/macOS và gặp lỗi hot-reload
       - WATCHPACK_POLLING=true 
-    command: npm run start:dev # Lệnh mặc định của NestJS cho dev mode
+    # Dòng command này phải nằm ở đây (ngang hàng với volumes, ports)
+    command: npm run start:dev
     depends_on:
       db:
         condition: service_healthy
@@ -33,7 +36,7 @@ services:
       - POSTGRES_PASSWORD=pass
       - POSTGRES_DB=mydb
     ports:
-      - "5432:5432" # Mở port để truy cập từ ngoài container (nếu cần)
+      - "5432:5432"
     command: ["postgres", "-c", "listen_addresses=*"]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d mydb"]
@@ -42,16 +45,17 @@ services:
       retries: 5
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  # PostgreSQL Admin Tool
+
   pgadmin:
-      image: dpage/pgadmin4
-      container_name: pgadmin_container
-      environment:
-        PGADMIN_DEFAULT_EMAIL: admin@admin.com # Email để đăng nhập pgAdmin
-        PGADMIN_DEFAULT_PASSWORD: admin        # Mật khẩu để đăng nhập pgAdmin
-      ports:
-        - "8080:80" # Truy cập pgAdmin qua port 8080 trên trình duyệt
-      depends_on:
-        - db
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
 volumes:
   postgres_data:
