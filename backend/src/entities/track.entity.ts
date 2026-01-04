@@ -1,45 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Album } from './album.entity';
 
-@Entity('tracks')
+@Entity('track')
 export class Track {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
-  title: string; // Tên bài hát từ Metadata
+  title: string;
 
-  @Column()
-  fileName: string; // Tên file thực tế (vd: 01. do i wanna know.flac)
+  @Column() // Thêm dòng này để sửa lỗi DeepPartial
+  path: string;
 
-  @Column()
-  relativePath: string; // Đường dẫn tương đối dùng cho FileManagerService
+  @Column({ default: 0 })
+  duration: number;
 
-  @Column({ type: 'int', nullable: true })
-  duration: number; // Thời lượng (giây)
-
-  // --- Thông số kỹ thuật chuyên sâu cho FLAC ---
-  
-  @Column({ type: 'int', nullable: true })
-  bitrate: number; // kbps
-
-  @Column({ type: 'int', nullable: true })
-  sampleRate: number; // Hz (vd: 44100, 96000)
-
-  @Column({ type: 'int', nullable: true })
-  bitDepth: number; // Bit (vd: 16, 24)
-
-  @Column({ type: 'varchar', length: 10, default: 'flac' })
-  extension: string;
-
-  @Column({ type: 'bigint', nullable: true })
-  fileSize: number; // Kích thước file (bytes)
-
-  // --- Quan hệ ---
-
-  @ManyToOne(() => Album, (album) => album.tracks, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Album, (album) => album.tracks)
   album: Album;
-
-  @CreateDateColumn()
-  createdAt: Date;
 }

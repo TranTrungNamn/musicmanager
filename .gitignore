@@ -16,3 +16,6 @@ backend/library/
 # Các file rác của hệ điều hành
 .DS_Store
 Thumbs.db
+
+# File cấu hình của Windows Explorer
+Desktop.ini

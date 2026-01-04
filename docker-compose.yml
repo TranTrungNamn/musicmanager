@@ -6,56 +6,22 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       target: development
-    container_name: nodejs_backend
+    container_name: music_backend
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      # Ánh xạ thư mục nhạc từ máy thật vào Docker
+      - C:/Users/ACER/qobuzdl/artist_qobuz_new_00:/music_data:ro    
+    environment: # Phải có mục environment riêng biệt
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}?schema=public
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true 
+    command: npm run start:dev
     ports:
       - "3000:3000"
-      - "9229:9229"
-    volumes:
-      # Kết nối code để sửa bên ngoài bên trong đổi ngay
-      - ./backend:/usr/src/app
-      # Giữ node_modules riêng biệt trong Docker
-      - /usr/src/app/node_modules
-      # Ánh xạ thư mục nhạc - Vế trái là thư mục library trên máy ACER của bạn
-      # Thay đổi dòng dưới đây thành đường dẫn tuyệt đối:
-      - C:/Users/ACER/qobuzdl/artist_qobuz_new_00:/usr/src/app/library
-    environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgresql://user:pass@db:5432/mydb?schema=public
-      - WATCHPACK_POLLING=true 
-    # Dòng command này phải nằm ở đây (ngang hàng với volumes, ports)
-    command: npm run start:dev
-    depends_on:
-      db:
-        condition: service_healthy
-
-  db:
-    image: postgres:15-alpine
-    container_name: postgres_db
-    environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=pass
-      - POSTGRES_DB=mydb
-    ports:
-      - "5432:5432"
-    command: ["postgres", "-c", "listen_addresses=*"]
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d mydb"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin_container
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "8080:80"
-    depends_on:
-      - db
-
-volumes:
-  postgres_data:
